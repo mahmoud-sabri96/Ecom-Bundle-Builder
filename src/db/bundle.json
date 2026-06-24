@@ -1,0 +1,18 @@
+{
+  "bundle": {
+    "discountPercentage": 30,
+    "minimumProducts": 3,
+    "shipping": {
+      "name": "Fast Shipping",
+      "price": 0
+    },
+    "extras": [
+      {
+        "id": "cam-unlimited",
+        "name": "Cam Unlimited",
+        "price": 19.99,
+        "type": "subscription"
+      }
+    ]
+  }
+}

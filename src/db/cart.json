@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "productId": "cam-v4",
+      "quantity": 1
+    },
+    {
+      "productId": "cam-pan-v3",
+      "quantity": 2
+    }
+  ]
+}

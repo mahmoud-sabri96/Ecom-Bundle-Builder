@@ -1,0 +1,108 @@
+   <div className="grid grid-cols-2 gap-3.75">
+              {products?.map((product) => {
+                // const isLast = index === products.length - 1;
+                return (
+                  <div
+                    key={product?.id}
+                  // className={
+                  //     isLast && products.length % 3 === 1
+                  //     ? "col-start-2 col-span-3"
+                  //     : ""
+                  // }
+                  >
+                    <DesktopProductCard product={product}/>
+                  </div>
+                )
+              })}
+            </div>
+
+
+            interface ProductCardProps {
+  // title?: string;
+  // description?: string;
+  // image?: string;
+  // discountLabel?: string | null | undefined;
+  // variants?: Variant[];
+  // oldPrice?: number;
+  // price?: number;
+  // learnMoreHref?: string;
+  product:Product
+}
+
+export default function DesktopProductCard({
+  // title,
+  // description,
+  // image,
+  // discountLabel,
+  // oldPrice,
+  // price,
+  // variants,
+  // learnMoreHref = "#",
+  product
+}: ProductCardProps) {
+
+
+
+
+     handleDecrementQty: (productId, activeVariant) =>
+        set((state) => {
+
+
+
+            
+
+            const updatedProduct = state?.products?.find((prod) => prod?.id === productId)
+
+            if (!updatedProduct) return;
+
+            if (updatedProduct?.variants?.length) {
+                const variant = updatedProduct.variants.find(
+                    (v) => v.id === activeVariant?.id
+                );
+                if (!variant) return;
+                variant.qty = Math.max(0, variant.qty - 1);
+            } else {
+                updatedProduct?.quantity = Math.max(0, updatedProduct?.quantity - 1)
+            }
+            // console.log(updatedProduct)
+            // const exists = state.products.find(
+            //     (product) => product.id === product.id
+            // );
+
+            // if (exists) {
+            //     if (updatedProduct?.variants?.length) {
+            //         const variant = updatedProduct.variants.find(
+            //             (v) => v.id === activeVariant?.id
+            //         );
+            //         if (!variant) return;
+            //         variant.qty = Math.max(0, variant.qty - 1);
+            //     }
+            //     return {
+            //         products: state.products.map((product) =>
+            //             i.product.id === product.id
+            //                 ? { ...i, quantity: i.quantity + 1 }
+            //                 : i
+            //         ),
+            //     };
+            // }
+
+            return {
+                items: [...state.items, { product, quantity: 1 }],
+            };
+
+            // products: state.products.map((product) =>
+            //     product.id === productId
+            //         ? {
+            //             ...product,
+            //             variants: product.variants.map((variant) =>
+            //                 variant.id === variantId
+            //                     ? {
+            //                         ...variant,
+            //                         qty: Math.max(0, variant.qty - 1),
+            //                     }
+            //                     : variant
+            //             ),
+            //         }
+            //         : product
+            // ),
+        }),
