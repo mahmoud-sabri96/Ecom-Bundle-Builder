@@ -1,4 +1,4 @@
-<![CDATA[# 🛒 Ecom Bundle Builder
+# 🛒 Ecom Bundle Builder
 
 A modern, interactive e-commerce **product bundle builder** built with React 19 and TypeScript. Users can browse products organized by category, select variants, adjust quantities, and view a real-time order summary — all within a sleek, responsive stepper interface.
 
@@ -182,4 +182,4 @@ This project is private and not currently published under an open-source license
 <p align="center">
   Built with ❤️ using React, TypeScript & Vite
 </p>
-]]>
+
