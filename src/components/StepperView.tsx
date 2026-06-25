@@ -1,22 +1,26 @@
+import { useCallback, useMemo, useState } from "react";
+// types
+import type { Product, Variant } from "@/types/products";
+// componets
+import MobileProductCard from "./MobileProductCard";
 import { StepAccordion } from "./ui/StepAccordion";
+import OutlineButton from "./ui/OutlineButton";
+import DesktopProductCard from "./DesktopProductCard";
+// custom hook
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+// zustand store
+import { useBundleStore } from "@/store/appStore";
+// lib
+import { CAMERA_ID, SENSOR_ID } from "@/lib/utils/constant";
+// icons
 import { CameraIcon } from "./icons/CameraIcon";
 import { SensorIcon } from "./icons/SensorIcon";
 import { PlanIconGray } from "./icons/PlanIconGray";
 import { ExtraIcon } from "./icons/ExtraIcon";
-import type { Product, Variant } from "@/types/products";
-import OutlineButton from "./ui/OutlineButton";
-import MobileProductCard from "./MobileProductCard";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import DesktopProductCard from "./DesktopProductCard";
-import { useMemo, useState } from "react";
-import { useBundleStore } from "@/store/appStore";
-import { CAMERA_ID, SENSOR_ID } from "@/lib/utils/constant";
-
+// ---------------------------------------------------------------------------
 interface StepperViewProps {
   products: Product[]
 }
-
-
 
 export default function StepperView({ products }: StepperViewProps) {
 
@@ -32,11 +36,23 @@ export default function StepperView({ products }: StepperViewProps) {
   const cameraItemsInBundle = useMemo(() => items?.filter((item) => item?.category?.id === CAMERA_ID), [items])
   const sensorsItemsInBundle = useMemo(() => items?.filter((item) => item?.category?.id === SENSOR_ID), [items])
 
-  const handleDecrement = (productId: string) => decrementQty(productId, activeVariant)
+  // const handleDecrement = (productId: string) => decrementQty(productId, activeVariant)
 
-  const handleIncrement = (productId: string) => incrementQty(productId, activeVariant)
+  // const handleIncrement = (productId: string) => incrementQty(productId, activeVariant)
 
-  console.log(items)
+  const handleDecrement = useCallback(
+    (productId: string) => {
+      decrementQty(productId, activeVariant);
+    },
+    [decrementQty, activeVariant]
+  );
+
+  const handleIncrement = useCallback(
+    (productId: string) => {
+      incrementQty(productId, activeVariant);
+    },
+    [incrementQty, activeVariant]
+  );
 
   return (
     <div className="flex flex-col gap-3.25">
@@ -109,7 +125,7 @@ export default function StepperView({ products }: StepperViewProps) {
         icon={<SensorIcon />}
         eyebrow="STEP 3 OF 4"
         badge={sensorsItemsInBundle?.length ? `${sensorsItemsInBundle.length} selected` : ""}
-        isOpenByDefault={false}
+        isOpenByDefault={sensorsItemsInBundle?.length > 0}
       >
         <div className="flex flex-col items-center">
 

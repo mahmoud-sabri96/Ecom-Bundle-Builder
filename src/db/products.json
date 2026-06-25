@@ -146,7 +146,7 @@
           "qty": 0
         }
       ],
-      "oldPrice": null,
+      "oldPrice": 0,
       "price": 89.98,
       "quantity": 0,
       "minQuantity": 0,

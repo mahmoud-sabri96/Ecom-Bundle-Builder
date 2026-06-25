@@ -2,13 +2,18 @@ import { create } from "zustand";
 import type { BundleItem, Product, Variant } from "../types/products";
 import data from "../db/products.json";
 
+const bundle = localStorage.getItem("bundle");
+
+const cashedBundle = bundle ? JSON.parse(bundle) : {}
+
 type BundleState = {
     products: Product[];
     items: BundleItem[];
+    bundleOldPrice: number;
+    bundleNewPrice: number;
     incrementQty: (productId: string, activeVariant?: Variant | null) => void;
     decrementQty: (productId: string, activeVariant?: Variant | null) => void;
 };
-
 function deriveItems(products: Product[]): BundleItem[] {
     return products.filter((product) => {
         const hasProductQty = product.quantity > 0;
@@ -16,10 +21,33 @@ function deriveItems(products: Product[]): BundleItem[] {
         return hasProductQty || hasVariantQty;
     });
 }
+function calculateTotals(items: Product[]) {
+    return items.reduce(
+        (totals, product) => {
+            const qty =
+                product.variants && product.variants.length > 0
+                    ? product.variants.reduce((sum, variant) => sum + variant.qty, 0)
+                    : product.quantity;
+
+            totals.totalNewPrice += product.price * qty;
+
+            const effectiveOldPrice = product.oldPrice ? product.oldPrice : product.price;
+            totals.totalOldPrice += effectiveOldPrice * qty;
+
+            return totals;
+        },
+        {
+            totalOldPrice: 0,
+            totalNewPrice: 0,
+        }
+    );
+}
 
 export const useBundleStore = create<BundleState>((set) => ({
-    products: data.products,
-    items: deriveItems(data.products),
+    products: bundle ? cashedBundle?.items : data.products,
+    items: bundle ? deriveItems(cashedBundle?.items) : deriveItems(data.products),
+    bundleOldPrice: bundle ? calculateTotals(cashedBundle?.items)['totalOldPrice'] :   0,
+    bundleNewPrice: bundle ? calculateTotals(cashedBundle?.items)['totalNewPrice'] : 0,
 
     incrementQty: (productId, activeVariant) =>
         set((state) => {
@@ -45,9 +73,15 @@ export const useBundleStore = create<BundleState>((set) => ({
                             : product.quantity,
                 };
             });
-
+            const items = deriveItems(products);
+            const { totalOldPrice, totalNewPrice } = calculateTotals(items);
             // items is derived from the FRESH products, not the stale state
-            return { products, items: deriveItems(products) };
+            return {
+                products,
+                items,
+                bundleOldPrice: totalOldPrice,
+                bundleNewPrice: totalNewPrice
+            };
         }),
 
     decrementQty: (productId, activeVariant) =>
@@ -68,7 +102,14 @@ export const useBundleStore = create<BundleState>((set) => ({
 
                 return { ...product, quantity: Math.max(0, product.quantity - 1) };
             });
-
-            return { products, items: deriveItems(products) };
+            const items = deriveItems(products);
+            const { totalOldPrice, totalNewPrice } = calculateTotals(items);
+            return {
+                products,
+                items,
+                bundleOldPrice: totalOldPrice,
+                bundleNewPrice: totalNewPrice
+            };
         }),
 }));
+

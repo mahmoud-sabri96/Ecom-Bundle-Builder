@@ -1,6 +1,9 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+// types
 import type { Product, Variant } from "@/types/products";
+// lib
 import { cn } from "@/lib/utils/cn";
+// icons
 import { MinusIcon } from "./icons/MinusIcon";
 import { PlusIcon } from "./icons/PlusIcon";
 // -----------------------------------------------------------------------------
@@ -21,7 +24,6 @@ export default function DesktopProductCard({
   onDecrement,
 }: ProductCardProps) {
 
-
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(activeVariant);
 
   const hasVariant = product?.variants?.length
@@ -30,10 +32,18 @@ export default function DesktopProductCard({
 
   const isDisabledBtn = (hasVariant && !selectedVariant?.id)  ? true : false
 
-  const handleChangeVariant = (variant: Variant) => {
-    setSelectedVariant(variant)
-    setActiveVariant(variant)
-  }
+  // const handleChangeVariant = (variant: Variant) => {
+  //   setSelectedVariant(variant)
+  //   setActiveVariant(variant)
+  // }
+
+  const handleChangeVariant = useCallback(
+    (variant: Variant) => {
+      setSelectedVariant(variant);
+      setActiveVariant(variant);
+    },
+    [setSelectedVariant, setActiveVariant]
+  );
 
   const visibleQty = useMemo(() => {
     if (product?.variants?.length > 0) {
@@ -46,7 +56,7 @@ export default function DesktopProductCard({
 
   return (
     <article
-      className={cn("w-full h-full flex items-center rounded-[10px] border-2 border-transparent hover:shadow  bg-white p-5 shadow-xs",
+      className={cn("w-full h-full  group cursor-default flex items-center rounded-[10px] border-2 border-transparent hover:shadow  bg-white p-5 shadow-xs",
         (hasQuantity) && 'border-[#4E2FD2B2] border-2 '
       )}
     >
@@ -63,7 +73,7 @@ export default function DesktopProductCard({
           <img
             src={product?.image}
             alt={product?.title}
-            className="h-28 w-28 object-contain"
+            className="h-28 w-28 group-hover:scale-130 transition-transform duration-300 ease-in-out object-contain"
           />
         </div>
 
@@ -109,24 +119,37 @@ export default function DesktopProductCard({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                disabled={isDisabledBtn}
+                // disabled={isDisabledBtn}
+                // onClick={() => onDecrement(product?.id)}
                 title={isDisabledBtn ? 'Please choose a variant first' : ''}
-                onClick={() => onDecrement(product?.id)}
+                onClick={() =>
+                  isDisabledBtn ?
+                    alert('Please Choose the variant first')
+                    :
+                    onDecrement(product?.id)
+                }
                 aria-label="Decrease quantity"
                 className={cn("flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-gray-100 text-gray-600 hover:bg-gray-200",
-                  (isDisabledBtn && selectedVariant && selectedVariant?.qty <= 1) && "  border  border-gray-light text-gray-light bg-[white]",
-                  isDisabledBtn ? 'cursor-not-allowed' : ''
+                  (selectedVariant && selectedVariant?.qty <= 1) && "border  border-gray-light text-gray-light bg-[white]",
+                  // isDisabledBtn ? 'cursor-not-allowed' : ''
                 )}
               >
-                <MinusIcon />
+                <MinusIcon/>
               </button>
               <span className="w-5 text-center text-base font-medium text-dark-black">
                 {visibleQty || 0}
               </span>
               <button
                 type="button"
-                onClick={() => onIncrement(product?.id)}
-                disabled={isDisabledBtn || visibleQty === product.maxQuantity}
+                // onClick={() => onIncrement(product?.id)}
+                onClick={() =>
+                  isDisabledBtn ?
+                    alert('Please Choose the variant first')
+                    :
+                    onIncrement(product?.id)
+                }
+                // disabled={isDisabledBtn || visibleQty === product.maxQuantity}
+                disabled={visibleQty === product.maxQuantity}
                 title={
                   isDisabledBtn ? 'Please choose a variant first'
                     :
@@ -135,7 +158,7 @@ export default function DesktopProductCard({
                 aria-label="Increase quantity"
                 className={cn(
                   "flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-gray-100 text-gray-600 hover:bg-gray-200",
-                  isDisabledBtn ? 'disabled cursor-not-allowed' : ''
+                  // isDisabledBtn ? 'disabled cursor-not-allowed' : ''
                 )}
               >
                 <PlusIcon />

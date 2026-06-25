@@ -1,6 +1,9 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+// types
 import type { Product, Variant } from "@/types/products";
+// lib
 import { cn } from "@/lib/utils/cn";
+// icons
 import { MinusIcon } from "./icons/MinusIcon";
 import { PlusIcon } from "./icons/PlusIcon";
 // ---------------------------------------------------------------------
@@ -27,10 +30,18 @@ export default function MobileProductCard({
 
   const isDisabledBtn = (hasVariant && !selectedVariant?.id) ? true : false
 
-  const handleChangeVariant = (variant: Variant) => {
-    setSelectedVariant(variant)
-    setActiveVariant(variant)
-  }
+  // const handleChangeVariant = (variant: Variant) => {
+  //   setSelectedVariant(variant)
+  //   setActiveVariant(variant)
+  // }
+
+  const handleChangeVariant = useCallback(
+    (variant: Variant) => {
+      setSelectedVariant(variant);
+      setActiveVariant(variant);
+    },
+    [setSelectedVariant, setActiveVariant]
+  );
 
   const visibleQty = useMemo(() => {
     if (product?.variants?.length > 0) {
@@ -41,7 +52,7 @@ export default function MobileProductCard({
   }, [selectedVariant, product])
 
   return (
-    <article className={cn("w-full h-full rounded-[10px] hover:shadow border-2 border-transparent bg-white p-2.5 shadow-xs",
+    <article className={cn("w-full h-full group cursor-default  rounded-[10px] hover:shadow border-2 border-transparent bg-white p-2.5 shadow-xs",
       (hasQuantity) && 'border-[#4E2FD2B2] border-2 '
     )} >
 
@@ -57,7 +68,7 @@ export default function MobileProductCard({
           <img
             src={product?.image}
             alt={product?.title}
-            className="h-20 w-20 object-contain"
+            className="h-20 w-20 group-hover:scale-140 transition-all duration-200 object-contain"
           />
         </div>
       </div>
@@ -105,13 +116,18 @@ export default function MobileProductCard({
           <div className="flex items-center gap-1.5">
             <button
               type="button"
-              disabled={isDisabledBtn}
+              // disabled={isDisabledBtn}
               title={isDisabledBtn ? 'Please choose a variant first' : ''}
-              onClick={() => onDecrement(product?.id)}
+              onClick={() =>
+                isDisabledBtn ?
+                  alert('Please Choose the variant first')
+                  :
+                  onDecrement(product?.id)
+              }
               aria-label="Decrease quantity"
               className={cn("flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-gray-100 text-gray-600 hover:bg-gray-200",
-                (isDisabledBtn && selectedVariant && selectedVariant?.qty <= 1) && "  border  border-gray-light text-gray-light bg-[white]",
-                isDisabledBtn ? 'cursor-not-allowed' : ''
+                (selectedVariant && selectedVariant?.qty <= 1) && "border  border-gray-light text-gray-light bg-[white]",
+                // isDisabledBtn ? 'cursor-not-allowed' : ''
               )}
             >
               <MinusIcon />
@@ -121,8 +137,14 @@ export default function MobileProductCard({
             </span>
             <button
               type="button"
-              onClick={() => onIncrement(product?.id)}
-              disabled={isDisabledBtn || visibleQty === product.maxQuantity}
+              onClick={() =>
+                isDisabledBtn ?
+                  alert('Please Choose the variant first')
+                  :
+                  onIncrement(product?.id)
+              }
+              // disabled={isDisabledBtn || visibleQty === product.maxQuantity}
+              disabled={visibleQty === product.maxQuantity}
               title={
                 isDisabledBtn ? 'Please choose a variant first'
                   :
@@ -131,7 +153,7 @@ export default function MobileProductCard({
               aria-label="Increase quantity"
               className={cn(
                 "flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-gray-100 text-gray-600 hover:bg-gray-200",
-                isDisabledBtn ? 'disabled cursor-not-allowed' : ''
+                // isDisabledBtn ? 'disabled cursor-not-allowed' : ''
               )}
             >
               <PlusIcon />

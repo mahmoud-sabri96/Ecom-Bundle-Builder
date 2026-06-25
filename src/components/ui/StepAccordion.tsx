@@ -1,8 +1,10 @@
 // import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
-import { ChevronDownIcon } from "../icons/ChevronDownIcon";
 import { useState, type ReactNode } from "react";
-
+// lib
+import { cn } from "@/lib/utils/cn";
+// icon
+import { ChevronDownIcon } from "../icons/ChevronDownIcon";
+// ------------------------------------------------------------------
  interface StepAccordionProps {
   contentId: string;
   title: string;
@@ -61,7 +63,7 @@ export function StepAccordion({
             <span>
               {Icon}
             </span>
-            <h2 className="text-dark-black font-semibold text-[22px] leading-tight">{title}</h2>
+            <h2 className="text-dark-black font-semibold text-lg md:text-[22px] leading-tight">{title}</h2>
           </div>
 
         <div className="flex items-center gap-2">

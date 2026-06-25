@@ -1,5 +1,3 @@
-
-
 type OutlineButtonProps = {
   label: string,
   className?: string,

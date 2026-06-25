@@ -1,6 +1,3 @@
-
-export type CurrencyCode = "USD";
-
 export interface Category {
     id: string;
     label: string;
@@ -31,11 +28,9 @@ export interface Product {
     minQuantity?: number;
     maxQuantity: number;
     currency?: string;
-    // layout?: "vertical" | "horizontal";
 }
 
 export type BundleItem = Product;
-
 
 export interface ServiceItem {
     id: string;
