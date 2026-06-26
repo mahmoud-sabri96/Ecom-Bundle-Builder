@@ -30,7 +30,7 @@ export default function SummaryView() {
     if(!items?.length) return;
     localStorage.setItem("bundle", JSON.stringify({
       items: products,
-      paln: SERVICES[0],
+      plan: SERVICES[0],
       shipping: SERVICES[1],
     }))
   }, [products, items])
