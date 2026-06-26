@@ -1,19 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
 // types
-import type { Product, Variant } from "@/types/products";
+import type { ProductCardProps } from "@/types/products";
 // lib
 import { cn } from "@/lib/utils/cn";
 // icons
 import { MinusIcon } from "./icons/MinusIcon";
 import { PlusIcon } from "./icons/PlusIcon";
+import { useProductCard } from "@/hooks/useProductCard";
 // ---------------------------------------------------------------------
-interface ProductCardProps {
-  product: Product,
-  activeVariant: Variant | null,
-  setActiveVariant: (variant: Variant) => void,
-  onIncrement: (productId: string) => void,
-  onDecrement: (productId: string) => void,
-}
+
 export default function MobileProductCard({
   product,
   onIncrement,
@@ -22,38 +16,36 @@ export default function MobileProductCard({
   onDecrement,
 }: ProductCardProps) {
 
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(activeVariant);
+  const {
+    selectedVariant,
+    hasQuantity,
+    isDisabledBtn,
+    handleChangeVariant,
+    visibleQty
+  } = useProductCard(product, activeVariant, setActiveVariant)
 
-  const hasVariant = product?.variants?.length
-
-  const hasQuantity = product?.quantity > 0 || product?.variants?.some(v => v.qty >= 1)
-
-  const isDisabledBtn = (hasVariant && !selectedVariant?.id) ? true : false
-
-  // const handleChangeVariant = (variant: Variant) => {
-  //   setSelectedVariant(variant)
-  //   setActiveVariant(variant)
-  // }
-
-  const handleChangeVariant = useCallback(
-    (variant: Variant) => {
-      setSelectedVariant(variant);
-      setActiveVariant(variant);
-    },
-    [setSelectedVariant, setActiveVariant]
-  );
-
-  const visibleQty = useMemo(() => {
-    if (product?.variants?.length > 0) {
-      return product?.variants?.find(i => i.id === selectedVariant?.id)?.qty
-    } else {
-      return product?.quantity
-    }
-  }, [selectedVariant, product])
+  // const [selectedVariant, setSelectedVariant] = useState<Variant | null>(activeVariant);
+  // const hasVariant = product?.variants?.length
+  // const hasQuantity = product?.quantity > 0 || product?.variants?.some(v => v.qty >= 1)
+  // const isDisabledBtn = (hasVariant && !selectedVariant?.id) ? true : false
+  // const handleChangeVariant = useCallback(
+  //   (variant: Variant) => {
+  //     setSelectedVariant(variant);
+  //     setActiveVariant(variant);
+  //   },
+  //   [setSelectedVariant, setActiveVariant]
+  // );
+  // const visibleQty = useMemo(() => {
+  //   if (product?.variants?.length > 0) {
+  //     return product?.variants?.find(i => i.id === selectedVariant?.id)?.qty
+  //   } else {
+  //     return product?.quantity
+  //   }
+  // }, [selectedVariant, product])
 
   return (
     <article className={cn("w-full h-full group cursor-default  rounded-[10px] hover:shadow border-2 border-transparent bg-white p-2.5 shadow-xs",
-      (hasQuantity) && 'border-[#4E2FD2B2] border-2 '
+      (hasQuantity) && 'border-[#4E2FD2B2] border-2'
     )} >
 
       {/* Image with discount badge */}
@@ -108,8 +100,6 @@ export default function MobileProductCard({
             );
           })}
         </div>
-
-
 
         {/* Quantity + Price */}
         <div className="mt-3 flex items-center justify-between">

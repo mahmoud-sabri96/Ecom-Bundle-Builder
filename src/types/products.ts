@@ -43,6 +43,14 @@ export interface ServiceItem {
     countsTowardTotal?: boolean;
 }
 
+export interface ProductCardProps {
+    product: Product,
+    activeVariant: Variant | null,
+    setActiveVariant: (variant: Variant) => void,
+    onIncrement: (productId: string) => void,
+    onDecrement: (productId: string) => void,
+}
+
 
 
 

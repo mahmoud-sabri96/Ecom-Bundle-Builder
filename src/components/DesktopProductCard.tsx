@@ -1,20 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
 // types
-import type { Product, Variant } from "@/types/products";
+import type { ProductCardProps } from "@/types/products";
 // lib
 import { cn } from "@/lib/utils/cn";
 // icons
 import { MinusIcon } from "./icons/MinusIcon";
 import { PlusIcon } from "./icons/PlusIcon";
+import { useProductCard } from "@/hooks/useProductCard";
 // -----------------------------------------------------------------------------
-
-interface ProductCardProps {
-  product: Product,
-  activeVariant:Variant | null,
-  setActiveVariant: (variant: Variant) => void,
-  onIncrement: (productId: string) => void,
-  onDecrement: (productId: string) => void,
-}
 
 export default function DesktopProductCard({
   product,
@@ -24,40 +16,18 @@ export default function DesktopProductCard({
   onDecrement,
 }: ProductCardProps) {
 
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(activeVariant);
-
-  const hasVariant = product?.variants?.length
-
-  const hasQuantity = product?.quantity > 0 || product?.variants?.some(v => v.qty >= 1)
-
-  const isDisabledBtn = (hasVariant && !selectedVariant?.id)  ? true : false
-
-  // const handleChangeVariant = (variant: Variant) => {
-  //   setSelectedVariant(variant)
-  //   setActiveVariant(variant)
-  // }
-
-  const handleChangeVariant = useCallback(
-    (variant: Variant) => {
-      setSelectedVariant(variant);
-      setActiveVariant(variant);
-    },
-    [setSelectedVariant, setActiveVariant]
-  );
-
-  const visibleQty = useMemo(() => {
-    if (product?.variants?.length > 0) {
-      return product?.variants?.find(i => i.id === selectedVariant?.id)?.qty
-    } else {
-      return product?.quantity
-    }
-  }, [selectedVariant, product])
-
+  const {
+    selectedVariant,
+    hasQuantity,
+    isDisabledBtn,
+    handleChangeVariant,
+    visibleQty,
+  } = useProductCard(product, activeVariant, setActiveVariant)
 
   return (
     <article
       className={cn("w-full h-full  group cursor-default flex items-center rounded-[10px] border-2 border-transparent hover:shadow  bg-white p-5 shadow-xs",
-        (hasQuantity) && 'border-[#4E2FD2B2] border-2 '
+        (hasQuantity) && 'border-[#4E2FD2B2] border-2'
       )}
     >
       <div className="relative flex gap-4.75">
@@ -119,8 +89,6 @@ export default function DesktopProductCard({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                // disabled={isDisabledBtn}
-                // onClick={() => onDecrement(product?.id)}
                 title={isDisabledBtn ? 'Please choose a variant first' : ''}
                 onClick={() =>
                   isDisabledBtn ?
@@ -134,14 +102,13 @@ export default function DesktopProductCard({
                   // isDisabledBtn ? 'cursor-not-allowed' : ''
                 )}
               >
-                <MinusIcon/>
+                <MinusIcon />
               </button>
               <span className="w-5 text-center text-base font-medium text-dark-black">
                 {visibleQty || 0}
               </span>
               <button
                 type="button"
-                // onClick={() => onIncrement(product?.id)}
                 onClick={() =>
                   isDisabledBtn ?
                     alert('Please Choose the variant first')
