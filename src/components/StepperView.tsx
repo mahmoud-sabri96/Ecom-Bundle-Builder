@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 // types
-import type { Product, Variant } from "@/types/products";
+import type { Product } from "@/types/products";
 // componets
 import MobileProductCard from "./MobileProductCard";
 import { StepAccordion } from "./ui/StepAccordion";
@@ -26,9 +26,9 @@ export default function StepperView({ products }: StepperViewProps) {
 
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  const [activeVariant, setActiveVariant] = useState<Variant | null>(null)
+  // const [activeVariant, setActiveVariant] = useState<Variant | null>(null)
 
-  const { items, incrementQty, decrementQty } = useBundleStore();
+  const { items, incrementQty, decrementQty, setActiveVariant } = useBundleStore();
 
   const cameraProducts = useMemo(() => products?.filter((prod) => prod?.category?.id === CAMERA_ID), [products])
   const sensorsProducts = useMemo(() => products?.filter((prod) => prod?.category?.id === SENSOR_ID), [products])
@@ -42,16 +42,25 @@ export default function StepperView({ products }: StepperViewProps) {
 
   const handleDecrement = useCallback(
     (productId: string) => {
+      const product = products?.find(prod => prod.id === productId);
+      const activeVariant = product?.variants?.find(
+        variant => variant.id === product.activeVariantId
+      );
       decrementQty(productId, activeVariant);
     },
-    [decrementQty, activeVariant]
+    [decrementQty, products]
   );
 
   const handleIncrement = useCallback(
     (productId: string) => {
+      const product = products?.find(prod => prod.id === productId);
+      const activeVariant = product?.variants?.find(
+        variant => variant.id === product.activeVariantId
+      );
+
       incrementQty(productId, activeVariant);
     },
-    [incrementQty, activeVariant]
+    [incrementQty, products]
   );
 
   return (
@@ -76,7 +85,7 @@ export default function StepperView({ products }: StepperViewProps) {
                   <DesktopProductCard
                     product={product}
                     setActiveVariant={setActiveVariant}
-                    activeVariant={activeVariant}
+                    activeVariant={product?.variants?.find(vari => vari.id === product?.activeVariantId)}
                     onIncrement={handleIncrement}
                     onDecrement={handleDecrement}
                   />
@@ -88,8 +97,8 @@ export default function StepperView({ products }: StepperViewProps) {
                 <div key={product?.id} >
                   <MobileProductCard
                     product={product}
-                    activeVariant={activeVariant}
                     setActiveVariant={setActiveVariant}
+                    activeVariant={product?.variants?.find(vari => vari.id === product?.activeVariantId)}
                     onIncrement={handleIncrement}
                     onDecrement={handleDecrement}
                   />
@@ -135,8 +144,8 @@ export default function StepperView({ products }: StepperViewProps) {
                 <div key={product?.id}>
                   <DesktopProductCard
                     product={product}
-                    activeVariant={activeVariant}
                     setActiveVariant={setActiveVariant}
+                    activeVariant={product?.variants?.find(vari => vari.id === product?.activeVariantId)}
                     onIncrement={handleIncrement}
                     onDecrement={handleDecrement}
                   />
@@ -148,8 +157,8 @@ export default function StepperView({ products }: StepperViewProps) {
                 <div key={product?.id} >
                   <MobileProductCard
                     product={product}
-                    activeVariant={activeVariant}
                     setActiveVariant={setActiveVariant}
+                    activeVariant={product?.variants?.find(vari => vari.id === product?.activeVariantId)}
                     onIncrement={handleIncrement}
                     onDecrement={handleDecrement}
                   />

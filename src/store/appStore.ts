@@ -13,6 +13,7 @@ type BundleState = {
     bundleNewPrice: number;
     incrementQty: (productId: string, activeVariant?: Variant | null) => void;
     decrementQty: (productId: string, activeVariant?: Variant | null) => void;
+    setActiveVariant: (productId: string, variantId: string) => void;
 };
 function deriveItems(products: Product[]): BundleItem[] {
     return products.filter((product) => {
@@ -46,7 +47,7 @@ function calculateTotals(items: Product[]) {
 export const useBundleStore = create<BundleState>((set) => ({
     products: bundle ? cashedBundle?.items : data.products,
     items: bundle ? deriveItems(cashedBundle?.items) : deriveItems(data.products),
-    bundleOldPrice: bundle ? calculateTotals(cashedBundle?.items)['totalOldPrice'] :   0,
+    bundleOldPrice: bundle ? calculateTotals(cashedBundle?.items)['totalOldPrice'] : 0,
     bundleNewPrice: bundle ? calculateTotals(cashedBundle?.items)['totalNewPrice'] : 0,
 
     incrementQty: (productId, activeVariant) =>
@@ -110,6 +111,20 @@ export const useBundleStore = create<BundleState>((set) => ({
                 bundleOldPrice: totalOldPrice,
                 bundleNewPrice: totalNewPrice
             };
+        }),
+    setActiveVariant: (productId, variantId) =>
+        set((state) => {
+            const products = state.products.map((product) => {
+                if (product.id !== productId) return product;
+
+                // Guard against setting a variant id that doesn't belong to this product
+                const variantExists = product.variants.some((v) => v.id === variantId);
+                if (!variantExists) return product;
+
+                return { ...product, activeVariantId: variantId };
+            });
+
+            return { products };
         }),
 }));
 

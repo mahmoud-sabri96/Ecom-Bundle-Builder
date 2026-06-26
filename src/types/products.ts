@@ -20,8 +20,8 @@ export interface Product {
     description?: string;
     learnMoreHref?: string;
     discountLabel?: string | null | undefined;
-    variants: Variant[] ;
-    selectedVariant?: string | null;
+    variants: Variant[];
+    activeVariantId?: string | null;
     oldPrice?: number | null;
     price: number;
     quantity: number;
@@ -45,8 +45,8 @@ export interface ServiceItem {
 
 export interface ProductCardProps {
     product: Product,
-    activeVariant: Variant | null,
-    setActiveVariant: (variant: Variant) => void,
+    activeVariant: Variant | undefined ,
+    setActiveVariant: (productId: string, variantId: string) => void,
     onIncrement: (productId: string) => void,
     onDecrement: (productId: string) => void,
 }

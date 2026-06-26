@@ -1,10 +1,12 @@
 import type { Product, Variant } from "@/types/products";
 import { useCallback, useMemo, useState } from "react";
 
-export function useProductCard(product: Product, activeVariant: Variant | null, setActiveVariant: (v: Variant) => void) {
+export function useProductCard(product: Product, activeVariant: Variant | undefined, setActiveVariant: (productId: string, v: string) => void) {
 
 
-    const [selectedVariant, setSelectedVariant] = useState<Variant | null>(activeVariant);
+    const [selectedVariant, setSelectedVariant] = useState<Variant | undefined>(activeVariant);
+
+    console.log(selectedVariant)
 
     const hasVariant = product?.variants?.length
 
@@ -15,7 +17,7 @@ export function useProductCard(product: Product, activeVariant: Variant | null, 
     const handleChangeVariant = useCallback(
         (variant: Variant) => {
             setSelectedVariant(variant);
-            setActiveVariant(variant);
+            setActiveVariant(product?.id, variant?.id);
         },
         [setSelectedVariant, setActiveVariant]
     );
