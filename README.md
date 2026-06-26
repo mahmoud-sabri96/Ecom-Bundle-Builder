@@ -60,10 +60,17 @@ cd Ecom-Bundle-Builder
 npm install
 ```
 
-### 3 — Start the Development Server
+### 4 — Start the Development Server
 
 ```bash
 npm run dev
+```
+### 5 — Before proceeding, verify that your current branch is either main or dev
+
+```bash
+git checkout main 
+|-or-|
+git checkout dev
 ```
 
 The app will be available at **[http://localhost:5173](http://localhost:5173)** (default Vite port).
@@ -174,9 +181,7 @@ npm run preview
 
 
 ## 📄 License
-
 This project is private and not currently published under an open-source license.
-
 ---
 
 <p align="center">
